@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Machine Dashboard</title>
+</head>
+<body>
+
+<h2>Machine Dashboard</h2>
+
+<table border="1" cellpadding="10">
+    <thead>
+        <tr>
+            <th>Machine Name</th>
+            <th>State</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Machine A</td>
+            <td id="Machine A">IDLE</td>
+        </tr>
+        <tr>
+            <td>Machine B</td>
+            <td id="Machine B">IDLE</td>
+        </tr>
+        <tr>
+            <td>Machine C</td>
+            <td id="Machine C">IDLE</td>
+        </tr>
+    </tbody>
+</table>
+
+<script>
+    const socket = new WebSocket(
+        (location.protocol === "https:" ? "wss://" : "ws://") 
+        + location.host + "/ws"
+    );
+
+    socket.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        const machine = data.machine;
+        const state = data.state;
+
+        const cell = document.getElementById(machine);
+        cell.innerText = state;
+
+        if (state === "PRODUCING") {
+            cell.style.backgroundColor = "green";
+        } else if (state === "IDLE") {
+            cell.style.backgroundColor = "yellow";
+        } else if (state === "STARVED") {
+            cell.style.backgroundColor = "red";
+        }
+    };
+</script>
+
+</body>
+</html>
